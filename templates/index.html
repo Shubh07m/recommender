@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Recommendation System</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f8; padding: 40px; }
+        .card { background: white; padding: 20px; border-radius: 8px; width: 400px; }
+        button { padding: 10px; width: 100%; background: #4CAF50; color: white; border: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Course Recommendation System</h2>
+
+    <form action="/recommend-ui" method="post">
+        <label>User ID</label><br>
+        <input type="number" name="user_id" required><br><br>
+
+        <label>Number of Recommendations</label><br>
+        <input type="number" name="num_recommendations" value="5"><br><br>
+
+        <button type="submit">Recommend</button>
+    </form>
+
+    {% if recommendations %}
+        <h3>Recommendations</h3>
+        <ul>
+        {% for r in recommendations %}
+            <li>
+                <b>{{ r["Course Name"] }}</b> (⭐ {{ r["Predicted Rating"] }})<br>
+                {{ r["Difficulty Level"] }} | {{ r["Instructor"] }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+</body>
+</html>
