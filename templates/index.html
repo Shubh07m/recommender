@@ -1,38 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Course Recommendation System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseAdvisor | Smart Recommendations</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial; background: #f4f6f8; padding: 40px; }
-        .card { background: white; padding: 20px; border-radius: 8px; width: 400px; }
-        button { padding: 10px; width: 100%; background: #4CAF50; color: white; border: none; }
+        :root {
+            --primary: #4361ee;
+            --success: #4cc9f0;
+            --bg: #f8f9fa;
+            --text: #2b2d42;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 { text-align: center; color: var(--primary); margin-bottom: 25px; }
+        
+        .input-group { margin-bottom: 15px; }
+        
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #edf2f7; 
+            border-radius: 8px; 
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus { outline: none; border-color: var(--primary); }
+
+        button { 
+            padding: 14px; 
+            width: 100%; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-weight: bold; 
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        button:hover { background: #3a56d4; transform: translateY(-1px); }
+        button:active { transform: translateY(1px); }
+
+        .results { margin-top: 30px; border-top: 1px solid #edf2f7; padding-top: 20px; }
+        
+        .rec-item {
+            background: #fdfdfd;
+            border: 1px solid #f0f0f0;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-pill {
+            background: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .error { color: #e63946; background: #ffe3e3; padding: 10px; border-radius: 8px; text-align: center; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Course Recommendation System</h2>
+<div class="container">
+    <h2><i class="fas fa-graduation-cap"></i> Course Recommendations</h2>
 
     <form action="/recommend-ui" method="post">
-        <label>User ID</label><br>
-        <input type="number" name="user_id" required><br><br>
+        <div class="input-group">
+            <label>User ID</label>
+            <input type="number" name="user_id" placeholder="e.g. 15796" required value="{{ user_id if user_id }}">
+        </div>
 
-        <label>Number of Recommendations</label><br>
-        <input type="number" name="num_recommendations" value="5"><br><br>
+        <div class="input-group">
+            <label>Number of Courses</label>
+            <input type="number" name="num_recommendations" placeholder="5" value="5">
+        </div>
 
-        <button type="submit">Recommend</button>
+        <button type="submit">Get Recommendations</button>
     </form>
 
+    {% if error %}
+        <div class="results">
+            <p class="error">{{ error }}</p>
+        </div>
+    {% endif %}
+
     {% if recommendations %}
-        <h3>Recommendations</h3>
-        <ul>
-        {% for r in recommendations %}
-            <li>
-                <b>{{ r["Course Name"] }}</b> (⭐ {{ r["Predicted Rating"] }})<br>
-                {{ r["Difficulty Level"] }} | {{ r["Instructor"] }}
-            </li>
+    <div class="results">
+        <h3 style="font-size: 1.1rem; margin-bottom: 15px;">Suggestions for you:</h3>
+        {% for rec in recommendations %}
+            <div class="rec-item">
+                <span style="font-weight: 500;">{{ rec.course_name }}</span>
+                <span class="score-pill">{{ "%.1f"|format(rec.predicted_rating) }} ★</span>
+            </div>
         {% endfor %}
-        </ul>
+    </div>
     {% endif %}
 </div>
 
